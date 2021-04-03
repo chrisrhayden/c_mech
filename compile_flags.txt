@@ -1,0 +1,3 @@
+-I./libs/include
+-L./libs/built/log.o
+-L./libs/built/hashmap.o
