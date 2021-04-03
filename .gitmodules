@@ -1,0 +1,6 @@
+[submodule "libs/log.c"]
+	path = libs/log.c
+	url = https://github.com/rxi/log.c.git
+[submodule "libs/c_hashmap"]
+	path = libs/c_hashmap
+	url = git@github.com:chrisrhayden/c_hashmap.git
