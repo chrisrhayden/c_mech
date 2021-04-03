@@ -1,0 +1,21 @@
+#ifndef C_MECH_CONTEXT
+#define C_MECH_CONTEXT
+
+#include <stdbool.h>
+
+#include <SDL2/SDL.h>
+
+typedef struct {
+    int width;
+    int height;
+} WindowSize;
+
+typedef struct {
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    WindowSize size;
+} Context;
+
+Context *init_context(const char *title, int width, int length);
+
+#endif
