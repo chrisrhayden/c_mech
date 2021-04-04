@@ -22,8 +22,9 @@ Context *init_context(const char *title, int width, int height) {
         return NULL;
     }
 
-    ctx->window = SDL_CreateWindow(title, 0, 0, ctx->size.width,
-                                   ctx->size.height, SDL_WINDOWEVENT_SHOWN);
+    ctx->window =
+        SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                         ctx->size.width, ctx->size.height, SDL_WINDOW_SHOWN);
 
     if (ctx->window == NULL) {
         log_error("SDL Error -- %s", SDL_GetError());
@@ -47,4 +48,10 @@ Context *init_context(const char *title, int width, int height) {
     }
 
     return ctx;
+}
+
+void drop_context(Context *ctx) {
+    SDL_Quit();
+
+    free(ctx);
 }

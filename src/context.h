@@ -18,4 +18,6 @@ typedef struct {
 
 Context *init_context(const char *title, int width, int length);
 
+void drop_context(Context *ctx);
+
 #endif

@@ -20,5 +20,23 @@ GameData *init_game_data(const char *title, int width, int height) {
         return NULL;
     }
 
+    data->state = NULL;
+
     return data;
+}
+
+void drop_game_data(GameData *data) {
+    if (data->ctx) {
+        drop_context(data->ctx);
+    }
+
+    if (data->state != NULL) {
+        drop_state(data->state);
+    }
+
+    free(data);
+}
+
+void drop_state(GameState *state) {
+    free(state);
 }

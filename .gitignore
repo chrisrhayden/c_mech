@@ -3,6 +3,8 @@
 libs/built/*
 libs/include/*
 
+assets/
+
 # the `out/` directory is where the binary and other auto generated files like
 # test coverage will be made and thus can be ignored
 out/*

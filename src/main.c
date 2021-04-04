@@ -5,6 +5,7 @@
 
 #include "context.h"
 #include "game_data.h"
+#include "game_loop.h"
 
 bool init_logging(int log_level) {
     log_set_level(log_level);
@@ -23,10 +24,14 @@ int main() {
 
     char title[] = "c_mech game";
 
-    int width = 400;
-    int height = 600;
+    int width = 600;
+    int height = 400;
 
     GameData *data = init_game_data(title, width, height);
+
+    run_game(data);
+
+    drop_game_data(data);
 
     return 0;
 }

@@ -6,7 +6,7 @@ SRC = $(wildcard ./src/*.c)
 
 TARGET_NAME = ./out/target_build
 
-LIB_FLAGS = `pkg-config --cflags --libs sdl2` -I./libs/include -lm
+LIB_FLAGS = `pkg-config --cflags --libs sdl2 freetype2` -I./libs/include -lm
 
 LIBS = ./libs/built/log.o ./libs/built/hashmap.o
 
