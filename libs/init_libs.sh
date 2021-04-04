@@ -28,7 +28,7 @@ cd "$base_dir"
 
 cd ./libs/log.c/
 
-GCC_CMD='gcc -Wall -pedantic -c -o2 ./src/log.c -o ../built/log.o'
+GCC_CMD='gcc -Wall -pedantic -c -o2 -DLOG_USE_COLOR ./src/log.c -o ../built/log.o'
 echo "$GCC_CMD"
 $GCC_CMD
 
