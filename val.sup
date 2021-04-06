@@ -1,0 +1,49 @@
+{
+   <radeonsi_memory_leak>
+   Memcheck:Leak
+   ...
+   obj:/usr/lib/dri/radeonsi_dri.so
+}
+{
+   <xset_memory_leak>
+   Memcheck:Leak
+   ...
+   fun:XSetLocaleModifiers
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   ...
+   fun:g_hash_table_new_full
+}
+{
+   <libllvm_memory_leak>
+   Memcheck:Leak
+   ...
+   obj:/usr/lib/libLLVM-11.so
+}
+{
+   <dl_open_worker_leak>
+   Memcheck:Leak
+   ...
+   fun:dl_open_worker
+}
+{
+   <dlerror_memory_leak>
+   Memcheck:Leak
+   ...
+   fun:dlerror_run
+}
+
+# {
+#    <sdl_memory_leak>
+#    Memcheck:Leak
+#    ...
+#    obj:/usr/lib/libSDL2-2.0.so.0.14.0
+# }
+# {
+#    <g_malloc_memory_leak>
+#    Memcheck:Leak
+#    ...
+#    fun:g_malloc
+# }

@@ -4,7 +4,7 @@
 #include "log.h"
 
 #include "context.h"
-#include "game_data.h"
+#include "font_cache.h"
 #include "game_loop.h"
 
 bool init_logging(int log_level) {
@@ -19,6 +19,8 @@ int main() {
 
         return 1;
     }
+
+    int *fuck = malloc(sizeof(int));
 
     log_trace("starting c_mech");
 
