@@ -20,8 +20,6 @@ int main() {
         return 1;
     }
 
-    int *fuck = malloc(sizeof(int));
-
     log_trace("starting c_mech");
 
     char title[] = "c_mech game";
