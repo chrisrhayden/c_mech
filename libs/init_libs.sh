@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 
-if [[ $(basename $PWD) != 'c_mech' ]]; then
-    echo 'pleas run in the base c_mech dir'
-    return 1
+base_dir="$PWD"
+
+if [[ ! -d "${base_dir}/.git" ]]; then
+    while [[ $base_dir != / ]] && [[ ! -d "${base_dir}/.git" ]]; do
+        base_dir="$(realpath "${base_dir}/..")"
+    done
 fi
 
-base_dir="$PWD"
+cd "$base_dir"
 
 mkdir ./out &>/dev/null
 mkdir ./libs/{include,built} &>/dev/null
@@ -15,7 +18,7 @@ git submodule init
 # git submodule update --init --recursive
  git submodule update --init --remote --merge
 
-cd ./libs/c_hashmap/
+cd ./libs/hashmap/
 
 mkdir ./out/ &>/dev/null
 
@@ -23,6 +26,17 @@ make build
 
 cp ./out/hashmap.o ../built
 cp ./src/hashmap*.h ../include
+
+cd "$base_dir"
+
+cd ./libs/dynamic_array
+
+mkdir ./out/ &>/dev/null
+
+make build
+
+cp ./out/dynamic_array.o ../built
+cp ./src/dynamic_array.h ../include
 
 cd "$base_dir"
 
