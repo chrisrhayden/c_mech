@@ -4,40 +4,8 @@
 
 #include "font_cache.h"
 
-/* lets see if this all works the way i think is does */
-SDL_Surface *new_rgb_surface(int width, int height) {
-    /* Create a 32-bit surface with the bytes of each pixel in R,G,B,A order,
-       as expected by OpenGL for textures */
-    SDL_Surface *surface;
-    Uint32 rmask, gmask, bmask, amask;
-
-    /* SDL interprets each pixel as a 32-bit number, so our masks must depend
-       on the endianness (byte order) of the machine */
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    rmask = 0xff000000;
-    gmask = 0x00ff0000;
-    bmask = 0x0000ff00;
-    amask = 0x000000ff;
-#else
-    rmask = 0x000000ff;
-    gmask = 0x0000ff00;
-    bmask = 0x00ff0000;
-    amask = 0xff000000;
-#endif
-
-    surface =
-        SDL_CreateRGBSurface(0, width, height, 32, rmask, gmask, bmask, amask);
-
-    if (surface == NULL) {
-        return NULL;
-    }
-    return surface;
-}
-
-SDL_Texture *make_glyph_cache() {
-    SDL_Surface *surface = new_rgb_surface(0, 0);
-
-    return NULL;
+uint64_t integer_hash_int(const int *x) {
+    return integer_hash32((const uint32_t)*x);
 }
 
 uint64_t string_hash(const StrKey *key) {
@@ -45,7 +13,7 @@ uint64_t string_hash(const StrKey *key) {
 }
 
 bool string_comp(const StrKey *key_1, const StrKey *key_2) {
-    return (strcmp(key_1->str, key_2->str) == 0);
+    return (strncmp(key_1->str, key_2->str, INT_MAX) == 0);
 }
 
 uint64_t unicode_hash(const uint32_t *key) {
@@ -56,8 +24,18 @@ bool unicode_comp(const uint32_t *key_1, const uint32_t *key_2) {
     return (*key_1 == *key_2);
 }
 
-void bitmap_drop(uint32_t *key, void *bitmap) {
+bool int_comp(const int *key_1, const int *key_2) {
+    return (*key_1 == *key_2);
+}
+
+void bitmap_drop(int *key, BitMap *bitmap) {
     free(key);
+
+    for (int i = 0; i < bitmap->len; ++i) {
+        free(bitmap->bitmaps[i]);
+    }
+
+    free(bitmap->bitmaps);
 
     free(bitmap);
 }
@@ -66,52 +44,78 @@ void font_drop(StrKey *key, FaceCache *face_cache) {
     free(key->str);
     free(key);
 
-    drop_hashmap(face_cache->bit_maps);
-
     FT_Done_Face(face_cache->face);
+
+    drop_hashmap(face_cache->sized_bitmaps);
 
     free(face_cache);
 }
 
-bool init_face(FontCache *cache, char *font_path) {
-    StrKey *key = malloc(sizeof(*key));
-
-    int len = strnlen(key->str, INT_MAX);
-
-    if (len == INT_MAX) {
-        return false;
-    }
-
-    key->len = len;
-
-    key->str = malloc(sizeof(char *));
-    strncpy(key->str, font_path, INT_MAX);
-
-    FT_Face face;
-
-    if (FT_New_Face(cache->library, font_path, -1, &face) != 0) {
-        return false;
-    }
-
+bool init_face_cache(FontCache *cache, char *font_path, wchar_t *initial_chars,
+                     int initial_point_size) {
+    // malloc here so we dont bother with the rest if we dont have memory
     FaceCache *face_cache = malloc(sizeof(*face_cache));
 
     if (face_cache == false) {
         return false;
     }
 
-    init_hashmap(face_cache->bit_maps, unicode_hash, unicode_comp, bitmap_drop);
+    StrKey *key = malloc(sizeof(*key));
 
-    if (face_cache->bit_maps == false) {
+    if (key == NULL) {
+        free(face_cache);
+        return false;
+    }
+
+    int len = strnlen(key->str, INT_MAX);
+
+    if (len == INT_MAX) {
+        free(key);
+        return false;
+    }
+
+    key->len = len;
+
+    key->str = malloc(sizeof(wchar_t *));
+    if (key->str == NULL) {
+        free(face_cache);
+        free(key);
+
+        return false;
+    }
+    strncpy(key->str, font_path, INT_MAX);
+
+    FT_Face face;
+
+    if (FT_New_Face(cache->library, font_path, -1, &face) != 0) {
+        free(face_cache);
+        free(key);
         return false;
     }
 
     face_cache->face = face;
+
+    SizedBitMap *sized_bitmaps;
+    init_hashmap(sized_bitmaps, integer_hash_int, int_comp, bitmap_drop);
+
+    if (sized_bitmaps == NULL) {
+        free(face_cache);
+        free(key);
+        return false;
+    }
+
+    face_cache->sized_bitmaps = sized_bitmaps;
+
+    make_bitmap_cache(face_cache, initial_chars, initial_point_size);
 
     enum HashMapResult result = FailedToInsert;
 
     insert_hashmap(cache->fonts_map, key, face_cache, result);
 
     if (result != Success) {
+        free(face_cache);
+        free(key);
+
         return false;
     }
 
@@ -136,7 +140,8 @@ FontCache *allocate_cache() {
     return cache;
 }
 
-FontCache *init_font_cache(char *font_path, char *initial_chars) {
+FontCache *init_font_cache(char *font_path, wchar_t *initial_chars,
+                           int initial_point_size) {
     if (font_path == NULL) {
         log_error("font path is null");
         return NULL;
@@ -157,7 +162,8 @@ FontCache *init_font_cache(char *font_path, char *initial_chars) {
         return NULL;
     }
 
-    if (init_face(cache, font_path) == false) {
+    if (init_face_cache(cache, font_path, initial_chars, initial_point_size) ==
+        false) {
         drop_font_cache(cache);
 
         return NULL;
@@ -176,4 +182,18 @@ void drop_font_cache(FontCache *cache) {
     }
 
     free(cache);
+}
+
+bool make_bitmaps(FT_Face face, BitMap *bitmap, wchar_t *chars_to_make,
+                  int point_size) {
+
+    return true;
+}
+
+bool make_bitmap_cache(FaceCache *face_cache, wchar_t *chars_to_make,
+                       int point_size) {
+
+    BitMap *bitmap = malloc(sizeof(*bitmap));
+
+    return true;
 }
