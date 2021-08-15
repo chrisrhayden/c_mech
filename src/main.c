@@ -3,8 +3,8 @@
 
 #include "log.h"
 
+#include "./font/font_cache.h"
 #include "context.h"
-#include "font_cache.h"
 #include "game_loop.h"
 
 bool init_logging(int log_level) {
