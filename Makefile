@@ -1,7 +1,12 @@
 CC=gcc
 CFLAGS=-Wall -g -pedantic
 
-SRC = $(wildcard ./src/*.c)
+SRC = $(wildcard ./src/*.c) \
+		$(wildcard ./src/font/*.c)
+
+TEST_SRC = $(wildcard ./test/*.c) \
+			$(wildcard ./test/font/*.c) \
+			$(wildcard ./src/font/*.c)
 
 TARGET_NAME = ./out/target_build
 
@@ -18,3 +23,9 @@ build_libs:
 
 run: build
 	./out/target_build
+
+build_test:
+	$(CC) $(CFLAGS) $(TEST_SRC) $(LIB_FLAGS) $(LIBS) -o ./out/test
+
+run_test: build_test
+	./out/test
