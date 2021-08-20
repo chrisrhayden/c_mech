@@ -41,9 +41,10 @@
 #    ...
 #    obj:/usr/lib/libSDL2-2.0.so.0.14.0
 # }
-# {
-#    <g_malloc_memory_leak>
-#    Memcheck:Leak
-#    ...
-#    fun:g_malloc
-# }
+{
+    <g_malloc_memory_leak>
+    Memcheck:Leak
+    ...
+    fun:g_malloc
+
+}
