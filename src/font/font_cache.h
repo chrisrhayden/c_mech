@@ -6,15 +6,16 @@
 
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
-
-#include <SDL2/SDL.h>
+#include <freetype/ftbitmap.h>
 
 #include "hashmap.h"
 
-HASHMAP(BitMapCache, char, void);
+HASHMAP(BitMapCache, char, FT_Bitmap);
 
 typedef struct {
     FT_FaceRec *face;
+    int max_width;
+    int max_height;
     BitMapCache *bitmap_cache;
 } FaceCache;
 
@@ -26,6 +27,6 @@ typedef struct {
 FontCache *init_font_cache(char font_path[], int initial_point_size);
 
 void drop_font_cache(FontCache *cache);
-void drop_face_cache(FaceCache *face);
+void drop_face_cache(struct FT_LibraryRec_ *library, FaceCache *face);
 
 #endif

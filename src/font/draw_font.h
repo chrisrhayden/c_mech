@@ -6,9 +6,9 @@
 #include <stdint.h>
 
 typedef struct {
-    char red;
-    char green;
-    char blue;
+    unsigned char red;
+    unsigned char green;
+    unsigned char blue;
 } Color;
 
 typedef struct {
@@ -16,7 +16,7 @@ typedef struct {
     size_t y;
     size_t width;
     size_t height;
-    char *buffer;
+    unsigned char *buffer;
 } SourceData;
 
 bool draw_character(FT_Bitmap *bitmap, Color *fg, Color *bg,
