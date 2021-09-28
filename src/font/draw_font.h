@@ -5,10 +5,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "font_cache.h"
+
 typedef struct {
-    unsigned char red;
-    unsigned char green;
-    unsigned char blue;
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
 } Color;
 
 typedef struct {
@@ -16,8 +18,11 @@ typedef struct {
     size_t y;
     size_t width;
     size_t height;
-    unsigned char *buffer;
+    uint32_t *buffer;
 } SourceData;
 
-bool draw_character(FT_Bitmap *bitmap, Color *fg, Color *bg,
-                    SourceData *source_data);
+bool draw_character(FT_Bitmap *bitmap, SourceData *source_data, Color *fg,
+                    Color *bg);
+
+bool draw_characters(BitMapCache *bitmap_cache, SourceData *data, Color *fg,
+                     Color *bg);

@@ -36,11 +36,12 @@ bool test_font() {
         return false;
     }
 
+    // 16 pixels for each character by 10 characters wide
     int width = 16 * 10;
+    // 16 pixels for each character by 15 characters down
     int height = 16 * 15;
 
-    unsigned char *buffer =
-        malloc(sizeof(unsigned char) * ((width * 4) * height));
+    uint32_t *buffer = malloc(sizeof(uint32_t) * (width * height));
 
     SourceData data = {
         .x = 0,
@@ -51,51 +52,23 @@ bool test_font() {
     };
 
     Color red = {.red = 178, .green = 34, .blue = 34};
-    Color green = {.red = 10, .green = 233, .blue = 0};
+    Color green = {.red = 10, .green = 255, .blue = 0};
 
-    for (int i = 0; i < ((width * 4) * height); i += 4) {
-        buffer[i] = green.red;
-        buffer[i + 1] = green.green;
-        buffer[i + 2] = green.blue;
-        buffer[i + 3] = (unsigned char)254;
+    uint32_t color =
+        (0xFF << 24) + (green.blue << 16) + (green.green << 8) + green.red;
+
+    for (int i = 0; i < (width * height); ++i) {
+        data.buffer[i] = color;
     }
 
-    int count = 1;
-    for (int c = 33; c < 127; ++c) {
-        char cc = c;
-        get_value_hashmap(bitmap_cache, &cc, bitmap);
-
-        int offset_w = (16 - bitmap->width) / 2;
-        int offset_h = (16 - bitmap->rows) / 2;
-
-        data.x += offset_w * 4;
-        int temp_y = data.y;
-        data.y += offset_h;
-
-        // printf("off w %d off h %d\n", offset_w, offset_h);
-
-        draw_character(bitmap, &red, &green, &data);
-
-        data.y = temp_y;
-
-        if (count == 10) {
-            data.x = 0;
-            data.y += 16;
-
-            count = 1;
-        } else {
-            data.x += (16 - offset_w) * 4;
-
-            ++count;
-        }
-    }
+    draw_characters(font_cache->face_cache->bitmap_cache, &data, &red, &green);
 
     drop_font_cache(font_cache);
 
     char *filename = "./out/ascii_test.png";
 
-    int success = stbi_write_png(filename, data.width, data.height, 4, buffer,
-                                 data.width * 4);
+    int success = stbi_write_png(filename, data.width, data.height, 4,
+                                 data.buffer, data.width * sizeof(uint32_t));
 
     free(buffer);
 
