@@ -3,7 +3,7 @@
 #include "log.h"
 
 Context *init_context(const char *title, int width, int height) {
-    log_trace("initializing context");
+    log_info("initializing context");
 
     Context *ctx = malloc(sizeof(*ctx));
 

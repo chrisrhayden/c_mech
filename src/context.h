@@ -1,5 +1,5 @@
-#ifndef C_MECH_CONTEXT
-#define C_MECH_CONTEXT
+#ifndef C_ROGUELIKE_CONTEXT
+#define C_ROGUELIKE_CONTEXT
 
 #include <stdbool.h>
 

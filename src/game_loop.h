@@ -1,5 +1,5 @@
-#ifndef C_MECH_LOOP
-#define C_MECH_LOOP
+#ifndef C_ROGUELIKE_GAME_LOOP
+#define C_ROGUELIKE_GAME_LOOP
 
 #include "game_data.h"
 

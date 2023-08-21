@@ -1,6 +1,7 @@
-#ifndef C_MECH_ASSETS
-#define C_MECH_ASSETS
+#ifndef C_ROGUELIKE_FONT_CACHE
+#define C_ROGUELIKE_FONT_CACHE
 
+#include <SDL2/SDL_surface.h>
 #include <stdint.h>
 #include <wchar.h>
 
@@ -8,25 +9,30 @@
 #include FT_FREETYPE_H
 #include <freetype/ftbitmap.h>
 
-#include "hashmap.h"
-
-HASHMAP(BitMapCache, char, FT_Bitmap);
-
-typedef struct {
-    FT_FaceRec *face;
-    int max_width;
-    int max_height;
-    BitMapCache *bitmap_cache;
-} FaceCache;
+#include "../collections/robin_hood_hashing/robin_hood.h"
 
 typedef struct {
     FT_Library library;
-    FaceCache *face_cache;
+    FT_Face face;
+    Map *bitmap_cache;
+    size_t max_char_width;
+    size_t max_char_height;
 } FontCache;
 
-FontCache *init_font_cache(char font_path[], int initial_point_size);
+extern int CHARACTER_LEN;
+extern wchar_t CHARACTER_ARRAY[256];
 
+FontCache *init_font_cache(char font_path[], int point_size);
 void drop_font_cache(FontCache *cache);
-void drop_face_cache(struct FT_LibraryRec_ *library, FaceCache *face);
+
+typedef struct {
+    size_t width;
+    size_t height;
+    uint32_t *data;
+} FontSpriteCache;
+
+FontSpriteCache *init_srpite_cache(FontCache *font_cache);
+
+SDL_Surface *make_font_surface(FontSpriteCache *sprites);
 
 #endif

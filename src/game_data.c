@@ -4,7 +4,7 @@
 #include "game_data.h"
 
 GameData *init_game_data(const char *title, int width, int height) {
-    log_trace("initializing game data");
+    log_info("initializing game data");
 
     GameData *data = malloc(sizeof(*data));
 
@@ -17,6 +17,13 @@ GameData *init_game_data(const char *title, int width, int height) {
     if (data->ctx == NULL) {
         free(data);
 
+        return NULL;
+    }
+
+    data->font_cache = init_font_cache("./assets/unscii-8.ttf", 16);
+
+    if (data->font_cache == NULL) {
+        free(data);
         return NULL;
     }
 

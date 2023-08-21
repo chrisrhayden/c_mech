@@ -1,10 +1,9 @@
+#include <locale.h>
 #include <stdbool.h>
 #include <stdio.h>
 
 #include "log.h"
 
-#include "./font/font_cache.h"
-#include "context.h"
 #include "game_loop.h"
 
 bool init_logging(int log_level) {
@@ -14,15 +13,17 @@ bool init_logging(int log_level) {
 }
 
 int main() {
+    setlocale(LC_ALL, "");
+
     if (init_logging(LOG_TRACE) == false) {
         fprintf(stderr, "could not init logging, quiting now");
 
         return 1;
     }
 
-    log_trace("starting c_mech");
+    log_info("starting roguelike");
 
-    char title[] = "c_mech game";
+    char title[] = "c_roguelike";
 
     int width = 600;
     int height = 400;
