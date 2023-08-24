@@ -20,6 +20,6 @@ typedef struct {
 // Color *bg);
 
 bool draw_characters(FontCache *font_cache, FontSpriteCache *sprite, Color *fg,
-                     Color *bg, wchar_t *characters, size_t char_len);
+                     wchar_t *characters, size_t char_len);
 
 #endif

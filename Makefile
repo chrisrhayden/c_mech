@@ -3,7 +3,11 @@ CFLAGS=-Wall -g -pedantic
 
 SRC = $(wildcard src/*.c) \
 	  $(wildcard src/font/*.c) \
-	  $(wildcard src/collections/robin_hood_hashing/*.c)
+	  $(wildcard src/collections/robin_hood_hashing/*.c) \
+	  $(wildcard src/game_map/*.c) \
+	  $(wildcard src/game/*.c) \
+	  $(wildcard src/components/*.c) \
+	  $(wildcard src/systems/*.c) 
 
 TARGET_NAME = ./out/target_build
 

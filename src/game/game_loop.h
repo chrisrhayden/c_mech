@@ -6,8 +6,6 @@
 enum LoopState {
     Running,
     Paused,
-    Nothing,
-    Quit,
 };
 
 typedef struct {

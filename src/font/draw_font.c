@@ -24,8 +24,12 @@ uint32_t pack_color(Color *color, uint32_t alpha) {
 #endif
 }
 
+/** draw font in to a buffer
+ *
+ * this is pretty naive as it will break on more complicated font i think
+ */
 bool draw_character(FT_Bitmap *bitmap, FontSpriteCache *sprites, Cursor *cursor,
-                    Color *fg, Color *bg) {
+                    Color *fg) {
     int bm_rows = bitmap->rows;
     int bm_width = bitmap->width;
     int s_width = sprites->width;
@@ -54,9 +58,7 @@ bool draw_character(FT_Bitmap *bitmap, FontSpriteCache *sprites, Cursor *cursor,
 }
 
 bool draw_characters(FontCache *cache, FontSpriteCache *sprites, Color *fg,
-                     Color *bg, wchar_t *chars, size_t char_len) {
-
-    log_debug("making character sprites");
+                     wchar_t *chars, size_t char_len) {
     bool success = true;
 
     Cursor cursor = {0, 0};
@@ -65,11 +67,8 @@ bool draw_characters(FontCache *cache, FontSpriteCache *sprites, Color *fg,
     FT_Bitmap *bitmap = NULL;
     int count = 1;
 
-    wchar_t *key = malloc(sizeof(wchar_t));
-
-    for (int i = 50; i < char_len && success; ++i) {
-        *key = chars[i];
-        item = lookup_key(cache->bitmap_cache, key);
+    for (int i = 0; i < char_len && success; ++i) {
+        item = lookup_key(cache->bitmap_cache, &chars[i]);
 
         if (item == NULL || item->value == NULL) {
             log_error("bitmap cache is empty or there is an error");
@@ -79,39 +78,35 @@ bool draw_characters(FontCache *cache, FontSpriteCache *sprites, Color *fg,
 
         bitmap = (FT_Bitmap *)item->value;
 
-        // set the character in the middle of the character box
-        /* int offset_w = (face_cache->max_width - bitmap->width) / 2; */
-        /* int offset_h = (face_cache->max_height - bitmap->rows) / 2; */
-        int offset_w = 0;
-        int offset_h = 0;
+        success = draw_character(bitmap, sprites, &cursor, fg);
 
-        cursor.x += offset_w;
+        SDL_Rect *rect = malloc(sizeof(SDL_Rect));
 
-        // keep the current y value as we need to reset the y to the same place
-        // so it can draw from the top of the row each time
-        int temp_y = cursor.y;
-        cursor.y += offset_h;
+        rect->x = cursor.x;
+        rect->y = cursor.y;
+        rect->w = cache->max_char_width;
+        rect->h = cache->max_char_height;
 
-        success = draw_character(bitmap, sprites, &cursor, fg, bg);
-
-        cursor.y = temp_y;
+        wchar_t *key = malloc(sizeof(wchar_t));
+        *key = chars[i];
+        success = insert_value(cache->sprite_rects, key, rect);
 
         // when the count reaches 10 move to the next row
+        // this is display the whole cache in a window
         if (count == 10) {
             cursor.x = 0;
-            cursor.y += cache->max_char_width;
+            cursor.y += cache->max_char_height;
 
             count = 1;
+
             // we are in the same row so move the x value and increment the
             // count
         } else {
-            cursor.x += (cache->max_char_width - offset_w);
+            cursor.x += cache->max_char_width;
 
             ++count;
         }
     }
-
-    free(key);
 
     return success;
 }

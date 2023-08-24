@@ -3,8 +3,8 @@
 
 #include <SDL2/SDL.h>
 
-#include "game_loop.h"
+#include "player.h"
 
-enum LoopState handle_input(SDL_Event *event);
+enum UserAction handle_input(SDL_Event *event);
 
 #endif

@@ -4,7 +4,8 @@
 
 #include "log.h"
 
-#include "game_loop.h"
+#include "game/game_data.h"
+#include "game/game_loop.h"
 
 bool init_logging(int log_level) {
     log_set_level(log_level);
@@ -25,10 +26,16 @@ int main() {
 
     char title[] = "c_roguelike";
 
-    int width = 600;
-    int height = 400;
+    int width = 1200;
+    int height = 900;
 
     GameData *data = init_game_data(title, width, height);
+
+    if (data == NULL) {
+        log_error("could not initialize game data");
+
+        return 1;
+    }
 
     run_game(data);
 

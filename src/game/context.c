@@ -1,6 +1,6 @@
 #include "context.h"
 
-#include "log.h"
+#include "../log.h"
 
 Context *init_context(const char *title, int width, int height) {
     log_info("initializing context");

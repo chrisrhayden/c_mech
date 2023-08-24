@@ -10,6 +10,7 @@
 #include <freetype/ftbitmap.h>
 
 #include "../collections/robin_hood_hashing/robin_hood.h"
+#include "../components/tiles.h"
 
 typedef struct {
     FT_Library library;
@@ -17,10 +18,11 @@ typedef struct {
     Map *bitmap_cache;
     size_t max_char_width;
     size_t max_char_height;
+    Map *sprite_rects;
 } FontCache;
 
 extern int CHARACTER_LEN;
-extern wchar_t CHARACTER_ARRAY[256];
+extern wchar_t CHARACTER_ARRAY[];
 
 FontCache *init_font_cache(char font_path[], int point_size);
 void drop_font_cache(FontCache *cache);
@@ -31,8 +33,10 @@ typedef struct {
     uint32_t *data;
 } FontSpriteCache;
 
-FontSpriteCache *init_srpite_cache(FontCache *font_cache);
+FontSpriteCache *init_sprite_cache(FontCache *font_cache);
 
 SDL_Surface *make_font_surface(FontSpriteCache *sprites);
+
+SDL_Rect *get_sprite_rect(FontCache *cache, wchar_t *key);
 
 #endif

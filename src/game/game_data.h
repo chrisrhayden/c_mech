@@ -1,14 +1,16 @@
 #ifndef C_ROGUELIKE_GAME_DATA
 #define C_ROGUELIKE_GAME_DATA
 
+#include "../components/entity.h"
+#include "../font/font_cache.h"
+#include "../game_map/game_map.h"
 #include "context.h"
-#include "font/font_cache.h"
 
 /* this will be where the map object and entities live eventually
  */
 typedef struct {
-    int x;
-    int y;
+    GameMap *game_map;
+    EntityCache *ent_cache;
 } GameState;
 
 typedef struct {
