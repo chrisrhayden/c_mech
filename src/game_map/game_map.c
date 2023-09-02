@@ -24,7 +24,7 @@ GameMap *init_game_map(size_t w, size_t h) {
 
     map->width = w;
     map->height = h;
-    map->map_len = len;
+    map->len = len;
 
     return map;
 }

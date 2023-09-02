@@ -13,7 +13,7 @@ typedef struct {
 typedef struct {
     size_t width;
     size_t height;
-    size_t map_len;
+    size_t len;
     MapTile *data;
 } GameMap;
 

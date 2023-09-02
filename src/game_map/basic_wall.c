@@ -73,7 +73,7 @@ GameMap *init_basic_wall(EntityCache *ent_cache, size_t w, size_t h) {
         return NULL;
     }
 
-    for (int i = 0; i < map->map_len; ++i) {
+    for (int i = 0; i < map->len; ++i) {
 
         map->data[i].blocking = true;
         map->data[i].visited = false;

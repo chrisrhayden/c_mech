@@ -99,8 +99,6 @@ bool draw_characters(FontCache *cache, FontSpriteCache *sprites, Color *fg,
 
             count = 1;
 
-            // we are in the same row so move the x value and increment the
-            // count
         } else {
             cursor.x += cache->max_char_width;
 

@@ -19,7 +19,7 @@ bool render_map(GameData *data, SDL_Texture *sprites) {
     size_t start_x_px = data->font_cache->max_char_width;
     size_t start_y_px = data->font_cache->max_char_height;
 
-    for (size_t i = 0; i < game_map->map_len; ++i) {
+    for (size_t i = 0; i < game_map->len; ++i) {
         MapTile *tile = &game_map->data[i];
 
         SDL_Rect *src_rect = get_sprite_rect(data->font_cache, &tile->sprite);
